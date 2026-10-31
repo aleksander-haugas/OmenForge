@@ -1,0 +1,21 @@
+#!/bin/sh
+# PROVIDE: omen_control_daemon
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+. /etc/rc.subr
+name=omen_control_daemon
+rcvar=omen_control_daemon_enable
+load_rc_config "$name"
+: ${omen_control_daemon_enable:=NO}
+command=/usr/sbin/daemon
+procname=/usr/sbin/daemon
+pidfile=/var/run/omen_control_daemon.pid
+command_args="-P ${pidfile} -o /var/log/omen-control-daemon.log -t omen_control_daemon /usr/local/sbin/omen-control-daemon"
+start_precmd=omen_control_daemon_prestart
+omen_control_daemon_prestart() {
+    [ -x /usr/local/sbin/omen-control-daemon ] && \
+    [ -x /usr/local/libexec/omen-mode-control ] && \
+    [ -x /usr/local/libexec/omenctl-control ] && \
+    /usr/sbin/pw groupshow omencontrol >/dev/null 2>&1
+}
+run_rc_command "$1"

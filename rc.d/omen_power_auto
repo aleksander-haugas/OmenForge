@@ -1,0 +1,20 @@
+#!/bin/sh
+# PROVIDE: omen_power_auto
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+. /etc/rc.subr
+name=omen_power_auto
+rcvar=omen_power_auto_enable
+load_rc_config "$name"
+: ${omen_power_auto_enable:=NO}
+command=/usr/sbin/daemon
+procname=/usr/sbin/daemon
+pidfile=/var/run/omen_power_auto.pid
+command_args="-P ${pidfile} -o /var/log/omen-power-auto.log -t omen_power_auto /bin/sh /usr/local/libexec/omen-power-auto run"
+start_precmd=omen_power_auto_prestart
+omen_power_auto_prestart() {
+    [ -x /usr/local/libexec/omen-power-auto ] && [ -x /usr/local/libexec/omenctl-control ] && [ -x /usr/local/sbin/acpi_call ] || return 1
+    [ "$(sed -n 's/^mode=//p' /var/run/omen-power-thermal.state 2>/dev/null | head -1)" = automatic ] || { echo 'Activar Automatic desde el panel primero' >&2; return 1; }
+    /usr/local/libexec/omen-power-auto check >/dev/null || return 1
+}
+run_rc_command "$1"

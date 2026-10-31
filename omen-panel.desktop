@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=HP OMEN Control
+GenericName=Power Mode & Thermal Control
+Comment=Perfiles HP y refrigeracion global temporizada para FreeBSD
+Exec=/usr/local/bin/omen-panel
+Icon=omen-thermal-control
+Terminal=false
+Categories=System;Settings;Monitor;
+StartupNotify=true

@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="/icons">
+    <file alias="omen-icon-256.png">assets/omen-icon-256.png</file>
+    <file alias="omen-icon-128.png">assets/omen-icon-128.png</file>
+    <file alias="power-eco.png">assets/power-eco.png</file>
+    <file alias="power-balanced.png">assets/power-balanced.png</file>
+    <file alias="power-performance.png">assets/power-performance.png</file>
+  </qresource>
+</RCC>

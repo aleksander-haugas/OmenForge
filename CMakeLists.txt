@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.20)
+project(omen_panel VERSION 0.4.16 LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTORCC ON)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
+add_executable(omen-panel main.cpp assets.qrc)
+target_link_libraries(omen-panel PRIVATE Qt6::Widgets)
+install(TARGETS omen-panel RUNTIME DESTINATION bin)
+install(FILES omen-panel.desktop DESTINATION share/applications)
+install(FILES assets/omen-icon.svg DESTINATION share/icons/hicolor/scalable/apps RENAME omen-thermal-control.svg)
+install(FILES assets/omen-icon-256.png DESTINATION share/icons/hicolor/256x256/apps RENAME omen-thermal-control.png)
+
+# Root-owned local broker and unprivileged client: no Qt requirement.
+add_executable(omen-control-daemon omen-control-daemon.cpp)
+add_executable(omen-control-client omen-control-client.cpp)
+install(TARGETS omen-control-daemon RUNTIME DESTINATION sbin)
+install(TARGETS omen-control-client RUNTIME DESTINATION bin)

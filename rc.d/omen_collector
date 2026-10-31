@@ -1,0 +1,40 @@
+#!/bin/sh
+# PROVIDE: omen_collector
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+#
+# HP OMEN telemetry collector for FreeBSD, read-only.
+# Default is OFF. To start once: service omen_collector onestart
+
+. /etc/rc.subr
+
+name=omen_collector
+rcvar=omen_collector_enable
+
+load_rc_config "$name"
+: ${omen_collector_enable:=NO}
+: ${omen_collector_interval:=3}
+
+command=/usr/sbin/daemon
+procname=/usr/sbin/daemon
+pidfile=/var/run/omen_collector.pid
+command_args="-P ${pidfile} -o /var/log/omen_collector.log -t omen_collector /bin/sh /usr/local/libexec/omen-collector.sh ${omen_collector_interval}"
+start_precmd=omen_collector_prestart
+
+omen_collector_prestart()
+{
+    case "${omen_collector_interval}" in
+        ''|*[!0-9]*) echo 'omen_collector_interval debe ser un entero 2..60' >&2; return 1 ;;
+    esac
+    if [ "${omen_collector_interval}" -lt 2 ] || [ "${omen_collector_interval}" -gt 60 ]; then
+        echo 'omen_collector_interval debe ser 2..60' >&2
+        return 1
+    fi
+    if [ ! -x /usr/local/sbin/omenctl ] || [ ! -f /usr/local/libexec/omen-collector.sh ]; then
+        echo 'Faltan omenctl o el colector en /usr/local/libexec' >&2
+        return 1
+    fi
+    return 0
+}
+
+run_rc_command "$1"
